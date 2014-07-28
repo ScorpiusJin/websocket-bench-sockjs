@@ -1,17 +1,17 @@
 {
-  "name": "websocket-bench",
+  "name": "websocket-bench-sockjs",
   "version": "0.1.0",
-  "description": "tool for benchmark websocket (socket.io, faye)",
+  "description": "Tool for benchmark websocket (socket.io, faye, primus, sockjs)",
   "main": "index.js",
   "scripts": {
     "test": "gulp mocha"
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/M6Web/websocket-bench.git"
+    "url": "git://github.com/akinsella/websocket-bench-sockjs.git"
   },
   "bin": {
-    "websocket-bench": "./bin/websocket-bench"
+    "websocket-bench": "./bin/websocket-bench-sockjs"
   },
   "author": "",
   "license": "BSD",
@@ -28,7 +28,6 @@
     "winston": "~0.7.1",
     "request": "2.34.0",
     "uuid": "1.4.1",
-    "winston": "*",
     "mkdirp": "*",
     "moment": "*",
     "underscore": "*"
