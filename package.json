@@ -1,6 +1,6 @@
 {
   "name": "websocket-bench-sockjs",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Tool for benchmark websocket (socket.io, faye, primus, sockjs)",
   "main": "index.js",
   "scripts": {
@@ -13,7 +13,7 @@
   "bin": {
     "websocket-bench": "./bin/websocket-bench-sockjs"
   },
-  "author": "",
+  "author": "Alexis Kinsella <alexis.kinsella@gmail.com> (http://blog.helyx.org/)",
   "license": "BSD",
   "dependencies": {
     "cli-table": "~0.3.0",
@@ -42,5 +42,17 @@
     "jshint-stylish": "~0.1.5",
     "gulp-mocha": "~0.4.1",
     "gulp-bump": "~0.1.5"
-  }
+  },
+  "bugs": {
+    "url": "https://github.com/akinsella/websocket-bench-sockjs/issues"
+  },
+  "homepage": "https://github.com/akinsella/websocket-bench-sockjs",
+  "directories": {
+    "test": "test"
+  },
+  "keywords": [
+    "websocket",
+    "bench",
+    "sockjs"
+  ]
 }
