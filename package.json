@@ -16,15 +16,22 @@
   "author": "",
   "license": "BSD",
   "dependencies": {
-    "socket.io-client": "~0.9.11",
-    "engine.io-client": "~0.9.0",
-    "commander": "~1.1.1",
-    "colors": "~0.6",
     "cli-table": "~0.3.0",
+    "colors": "~0.6",
+    "commander": "~1.1.1",
+    "engine.io-client": "~0.9.0",
     "faye": "~0.8.9",
-    "winston": "~0.7.1",
+    "node-sockjs-client": "^1.0.0",
+    "primus": "~1.5.2",
     "socket.io": "~0.9.14",
-    "primus": "~1.5.2"
+    "socket.io-client": "~0.9.11",
+    "winston": "~0.7.1",
+    "request": "2.34.0",
+    "uuid": "1.4.1",
+    "winston": "*",
+    "mkdirp": "*",
+    "moment": "*",
+    "underscore": "*"
   },
   "devDependencies": {
     "chai": "~1.6.0",

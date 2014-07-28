@@ -24,6 +24,7 @@ var paths = {
     'test/lib/logger.js',
     'test/lib/monitor.js',
     'test/lib/socketioworker.js',
+    'test/lib/sockjsworker.js',
     'test/lib/steps.js',
     'test/lib/stopwatch.js'
   ],
