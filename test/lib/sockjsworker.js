@@ -3,7 +3,7 @@ var mocha = require('mocha'),
   chai = require('chai'),
   assert = chai.assert,
   should = chai.should(),
-  SockJS =  require('node-sockjs-client');
+  SockJS =  require('node-sockjs-client-aki');
 
 var SockJSWorker = require('../../lib/workers/sockjsworker.js'),
   BaseWorker = require('../../lib/workers/baseworker.js'),
