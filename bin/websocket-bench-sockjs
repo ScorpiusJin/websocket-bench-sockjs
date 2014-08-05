@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
 var http = require('http');
-http.globalAgent.maxSockets = 1000;
+http.globalAgent.maxSockets = 32768;
 
 require(__dirname + '/../index.js');
