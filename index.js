@@ -1,98 +1,103 @@
 /*global require, process*/
 
 var Benchmark = require('./lib/benchmark.js'),
-  DefaultReporter = require('./lib/defaultreporter.js'),
-  fs = require('fs'),
-  program = require('commander'),
-  logger = require('./lib/logger');
+	DefaultReporter = require('./lib/defaultreporter.js'),
+	fs = require('fs'),
+	program = require('commander'),
+	logger = require('./lib/logger');
 
 program
-  .version('0.1.4')
-  .usage('[options] <server>')
-  .option('-a, --amount <n>', 'Total number of persistent connection, Default to 100', parseInt)
-  .option('-c, --concurency <n>', 'Concurent connection per second, Default to 20', parseInt)
-  .option('-r, --ramp <n>', 'Ramp in ms, Default to 5', parseInt)
-  .option('-w, --worker <n>', 'number of worker', parseInt)
-  .option('-g, --generator <file>', 'js file for generate message or special event')
-  .option('-m, --message <n>', 'number of message for a client. Default to 0', parseInt)
-  .option('-o, --output <output>', 'Output file')
-  .option('-t, --type <type>', 'type of websocket server to bench(socket.io, engine.io, faye, primus). Default to io')
-  .option('-p, --transport <type>', 'type of transport to websocket(engine.io, websockets, browserchannel, sockjs, socket.io). Default to websockets')
-  .option('-k, --keep-alive', 'Keep alive connection')
-  .option('-v, --verbose', 'Verbose Logging')
-  .parse(process.argv);
+	.version('0.1.4')
+	.usage('[options] <server>')
+	.option('-a, --amount <n>', 'Total number of persistent connection, Default to 100', parseInt)
+	.option('-c, --concurrency <n>', 'Concurrent connection per second, Default to 20', parseInt)
+	.option('-r, --request-ramp <n>', 'Request ramp in ms, Default to 5', parseInt)
+	.option('-l, --worker-ramp <n>', 'Worker ramp in ms, Default to 5', parseInt)
+	.option('-w, --worker <n>', 'number of worker', parseInt)
+	.option('-g, --generator <file>', 'js file for generate message or special event')
+	.option('-m, --message <n>', 'number of message for a client. Default to 0', parseInt)
+	.option('-o, --output <output>', 'Output file')
+	.option('-t, --type <type>', 'type of websocket server to bench(sockjs). Default to io')
+	.option('-p, --transport <type>', 'type of transport to websocket (websockets, sockjs). Default to websockets')
+	.option('-k, --keep-alive', 'Keep alive connection')
+	.option('-v, --verbose', 'Verbose Logging')
+	.parse(process.argv);
 
 if (program.args.length < 1) {
-  program.help();
+	program.help();
 }
 
 var server = program.args[0];
 
 // Set default value
 if (!program.worker) {
-  program.worker = 1;
+	program.worker = 1;
 }
 
 if (!program.verbose) {
-  program.verbose = false;
+	program.verbose = false;
 }
 
 if (!program.amount) {
-  program.amount = 100;
+	program.amount = 100;
 }
 
-if (!program.concurency) {
-    program.concurency = 20;
+if (!program.concurrency) {
+	program.concurrency = 20;
 }
 
-if (!program.ramp) {
-    program.ramp = 5;
+if (!program.requestRamp) {
+	program.requestRamp = 5;
+}
+
+if (!program.workerRamp) {
+	program.workerRamp = 5;
 }
 
 if (!program.generator) {
-  program.generator = __dirname + '/lib/generator.js';
+	program.generator = __dirname + '/lib/generator.js';
 }
 
 if (program.generator.indexOf('/') !== 0) {
-  program.generator = process.cwd() + '/' + program.generator;
+	program.generator = process.cwd() + '/' + program.generator;
 }
 
 if (!program.message) {
-  program.message = 0;
+	program.message = 0;
 }
 
 if (!program.type) {
-  program.type = 'socket.io';
+	program.type = 'sockjs';
 }
 
-if (program.type === 'primus' && !program.transport) {
-  program.transPort = 'websockets';
-}
-
-logger.info('Launch bench with ' + program.amount + ' total connection, ' + program.concurency + ' concurent connection, ' + program.ramp + 'ms ramp');
-logger.info(program.message + ' message(s) send by client');
-logger.info(program.worker + ' worker(s)');
-logger.info('WS server : ' + program.type);
+logger.info('Launch bench with :' +
+	' - ' + program.amount + ' total connection' +
+	' - ' + program.concurrency + ' concurrent connection' +
+	' - ' + program.requestRamp + 'ms request ramp' +
+	' - ' + program.workerRamp + 'ms worker ramp' +
+	' - ' + program.worker + ' worker(s) ' +
+	' - ' + program.message + ' message(s) send by client' +
+	" - WS server : '" + program.type + "'");
 
 var options = {
-  generatorFile : program.generator,
-  type          : program.type,
-  transport     : program.transport,
-  keepAlive     : program.keepAlive,
-  verbose       : program.verbose
+	generatorFile: program.generator,
+	type: program.type,
+	transport: program.transport,
+	keepAlive: program.keepAlive,
+	verbose: program.verbose
 };
 
 if (program.verbose) {
-  logger.debug("Benchmark Options " + JSON.stringify(options));
+	logger.debug("Benchmark Options " + JSON.stringify(options));
 }
 
 var outputStream = null;
 
 if (program.output) {
-  if (program.generator.indexOf('/') !== 0) {
-    program.output = __dirname + '/' + program.generator;
-  }
-  outputStream = fs.createWriteStream(program.output);
+	if (program.generator.indexOf('/') !== 0) {
+		program.output = __dirname + '/' + program.generator;
+	}
+	outputStream = fs.createWriteStream(program.output);
 }
 
 var reporter = new DefaultReporter(outputStream);
@@ -100,17 +105,17 @@ var bench = new Benchmark(server, reporter, options);
 
 // On ctrl+c
 process.on('SIGINT', function () {
-  logger.info("\nGracefully stoping worker from SIGINT (Ctrl+C)");
+	logger.info("\nGracefully stoping worker from SIGINT (Ctrl+C)");
 
-  setTimeout(function () {
+	setTimeout(function () {
 
-    if (bench.monitor.isRunning()) {
-      bench.terminate();
-    }
+		if (bench.monitor.isRunning()) {
+			bench.terminate();
+		}
 
-  }, 2000);
+	}, 2000);
 
 });
 
-bench.launch(program.amount, program.concurency, program.ramp, program.worker, program.message, program.keepAlive);
+bench.launch(program.amount, program.concurrency, program.requestRamp, program.workerRamp, program.worker, program.message, program.keepAlive);
 
