@@ -70,14 +70,14 @@ if (!program.type) {
 	program.type = 'sockjs';
 }
 
-logger.info('Launch bench with :' +
-	' - ' + program.amount + ' total connection' +
-	' - ' + program.concurrency + ' concurrent connection' +
-	' - ' + program.requestRamp + 'ms request ramp' +
-	' - ' + program.workerRamp + 'ms worker ramp' +
-	' - ' + program.worker + ' worker(s) ' +
-	' - ' + program.message + ' message(s) send by client' +
-	" - WS server : '" + program.type + "'");
+logger.info('Launch bench with :\n' +
+	' - ' + program.amount + ' total connection\n' +
+	' - ' + program.concurrency + ' concurrent connection\n' +
+	' - ' + program.requestRamp + 'ms request ramp\n' +
+	' - ' + program.workerRamp + 'ms worker ramp\n' +
+	' - ' + program.worker + ' worker(s)\n' +
+	' - ' + program.message + ' message(s) send by client\n' +
+	" - WS server : '" + program.type + "'\n");
 
 var options = {
 	generatorFile: program.generator,
