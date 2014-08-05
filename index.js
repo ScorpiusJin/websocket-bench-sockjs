@@ -3,6 +3,7 @@
 var Benchmark = require('./lib/benchmark.js'),
 	DefaultReporter = require('./lib/defaultreporter.js'),
 	fs = require('fs'),
+	os = require('os'),
 	program = require('commander'),
 	logger = require('./lib/logger');
 
@@ -11,9 +12,9 @@ program
 	.usage('[options] <server>')
 	.option('-a, --amount <n>', 'Total number of persistent connection, Default to 100', parseInt)
 	.option('-c, --concurrency <n>', 'Concurrent connection per second, Default to 20', parseInt)
-	.option('-R, --request-ramp <n>', 'Request ramp in ms, Default to 5', parseInt)
-	.option('-W, --worker-ramp <n>', 'Worker ramp in ms, Default to 5', parseInt)
-	.option('-w, --worker <n>', 'number of worker', parseInt)
+	.option('-r, --request-ramp <n>', 'Request ramp in ms, Default to 5', parseInt)
+	.option('-w, --worker-ramp <n>', 'Worker ramp in ms, Default to 5', parseInt)
+	.option('-W, --worker <n>', 'number of worker', parseInt)
 	.option('-g, --generator <file>', 'js file for generate message or special event')
 	.option('-m, --message <n>', 'number of message for a client. Default to 0', parseInt)
 	.option('-o, --output <output>', 'Output file')
@@ -31,7 +32,7 @@ var server = program.args[0];
 
 // Set default value
 if (!program.worker) {
-	program.worker = 1;
+	program.worker = os.cpu().length;
 }
 
 if (!program.verbose) {

@@ -31,8 +31,10 @@ command help
       -h, --help               Output usage information
       -V, --version            Output the version number
       -a, --amount <n>         Total number of persistent connection, Default to 100
-      -c, --concurrency <n>     Concurrent connection per second, Default to 20
-      -w, --worker <n>         Number of worker(s)
+      -c, --concurrency <n>    Concurrent connection per second, Default to 20
+	  -r, --request-ramp <n>   Request ramp in ms, Default to 5
+	  -w, --worker-ramp <n>    Worker ramp in ms, Default to 5
+      -W, --worker <n>         Number of worker(s)
       -g, --generator <file>   Js file for generate message or special event
       -m, --message <n>        Number of message for a client. Default to 0
       -o, --output <output>    Output file
