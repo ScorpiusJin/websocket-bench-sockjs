@@ -31,7 +31,7 @@ var server = program.args[0];
 
 // Set default value
 if (!program.worker) {
-	program.worker = os.cpu().length;
+	program.worker = os.cpus().length;
 }
 
 if (!program.verbose) {
