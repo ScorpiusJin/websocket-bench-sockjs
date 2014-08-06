@@ -11,15 +11,13 @@ program
 	.version('0.1.4')
 	.usage('[options] <server>')
 	.option('-a, --amount <n>', 'Total number of persistent connection, Default to 100', parseInt)
-	.option('-c, --concurrency <n>', 'Concurrent connection per second, Default to 20', parseInt)
-	.option('-r, --ramp <n>', 'Connection ramp in ms, Default to 5', parseInt)
-	.option('-w, --worker <n>', 'number of worker', parseInt)
+	.option('-w, --worker-ramp <n>', 'Worker ramp in ms, Default to 5', parseInt)
+	.option('-r, --request-ramp <n>', 'Request ramp in ms, Default to 5', parseInt)
+	.option('-W, --worker <n>', 'number of worker', parseInt)
 	.option('-g, --generator <file>', 'js file for generate message or special event')
-	.option('-m, --message <n>', 'number of message for a client. Default to 0', parseInt)
 	.option('-o, --output <output>', 'Output file')
 	.option('-t, --type <type>', 'type of websocket server to bench(sockjs). Default to io')
 	.option('-p, --transport <type>', 'type of transport to websocket (websockets, sockjs). Default to websockets')
-	.option('-k, --keep-alive', 'Keep alive connection')
 	.option('-v, --verbose', 'Verbose Logging')
 	.parse(process.argv);
 
@@ -42,12 +40,12 @@ if (!program.amount) {
 	program.amount = 100;
 }
 
-if (!program.concurrency) {
-	program.concurrency = 20;
+if (!program.workerRamp) {
+    program.workerRamp = 5;
 }
 
-if (!program.ramp) {
-	program.ramp = 5;
+if (!program.requestRamp) {
+    program.requestRamp = 5;
 }
 
 if (!program.generator) {
@@ -58,9 +56,6 @@ if (program.generator.indexOf('/') !== 0) {
 	program.generator = process.cwd() + '/' + program.generator;
 }
 
-if (!program.message) {
-	program.message = 0;
-}
 
 if (!program.type) {
 	program.type = 'sockjs';
@@ -68,17 +63,15 @@ if (!program.type) {
 
 logger.info('Launch bench with :\n' +
 	' - ' + program.amount + ' total connection\n' +
-	' - ' + program.concurrency + ' concurrent connection\n' +
-	' - ' + program.ramp + 'ms connection ramp\n' +
+    ' - ' + program.requestRamp + 'ms request ramp\n' +
+    ' - ' + program.workerRamp + 'ms worker ramp\n' +
 	' - ' + program.worker + ' worker(s)\n' +
-	' - ' + program.message + ' message(s) send by client\n' +
 	" - WS server : '" + program.type + "'\n");
 
 var options = {
 	generatorFile: program.generator,
 	type: program.type,
 	transport: program.transport,
-	keepAlive: program.keepAlive,
 	verbose: program.verbose
 };
 
@@ -112,5 +105,5 @@ process.on('SIGINT', function () {
 
 });
 
-bench.launch(program.amount, program.concurrency, program.ramp, program.worker, program.message, program.keepAlive);
+bench.launch(program.amount, program.worker, program.requestRamp, program.workerRamp);
 
