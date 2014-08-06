@@ -1,4 +1,4 @@
-# websocket bench
+# websocket bench for sockjs
 
 Nodejs cli tool for benchmarking websocket servers. It supports sockjs.
 
