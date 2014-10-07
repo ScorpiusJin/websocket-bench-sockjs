@@ -5,7 +5,9 @@ var Benchmark = require('./lib/benchmark.js'),
 	fs = require('fs'),
 	os = require('os'),
 	program = require('commander'),
-	logger = require('./lib/logger');
+	logger = require('./lib/logger'),
+    mkdirp = require('mkdirp');
+
 
 program
 	.version('0.1.4')
@@ -17,7 +19,8 @@ program
 	.option('-g, --generator <file>', 'js file for generate message or special event')
 	.option('-o, --output <output>', 'Output file')
 	.option('-t, --type <type>', 'type of websocket server to bench(sockjs). Default to io')
-	.option('-p, --transport <type>', 'type of transport to websocket (websockets, sockjs). Default to websockets')
+    .option('-p, --transport <type>', 'type of transport to websocket (websockets, sockjs). Default to websockets')
+    .option('-R, --reporting-path <path>', 'path of directory for reporting')
 	.option('-v, --verbose', 'Verbose Logging')
 	.parse(process.argv);
 
@@ -48,6 +51,10 @@ if (!program.requestRamp) {
     program.requestRamp = 5;
 }
 
+if (!program.reportingPath) {
+    program.reportingPath = process.cwd() + '/reporting';
+}
+
 if (!program.generator) {
 	program.generator = __dirname + '/lib/generator.js';
 }
@@ -65,45 +72,53 @@ logger.info('Launch bench with :\n' +
 	' - ' + program.amount + ' total connection\n' +
     ' - ' + program.requestRamp + 'ms request ramp\n' +
     ' - ' + program.workerRamp + 'ms worker ramp\n' +
-	' - ' + program.worker + ' worker(s)\n' +
+    ' - ' + program.worker + ' worker(s)\n' +
+    ' - Reporting path: ' + program.reportingPath + '\n' +
 	" - WS server : '" + program.type + "'\n");
 
 var options = {
 	generatorFile: program.generator,
 	type: program.type,
 	transport: program.transport,
-	verbose: program.verbose
+	verbose: program.verbose,
+    reportingPath: program.reportingPath
 };
 
 if (program.verbose) {
 	logger.debug("Benchmark Options " + JSON.stringify(options));
 }
 
-var outputStream = null;
 
-if (program.output) {
-	if (program.generator.indexOf('/') !== 0) {
-		program.output = __dirname + '/' + program.generator;
-	}
-	outputStream = fs.createWriteStream(program.output);
-}
+mkdirp(program.reportingPath, function(err) {
+    if (err) {
+        console.error("Could not create reporting directory on path: '" + program.reportingPath + "' - Error: " + JSON.stringify(err));
+        process.exit(1);
+    }
 
-var reporter = new DefaultReporter(outputStream);
-var bench = new Benchmark(server, reporter, options);
+    var outputStream = null;
+
+    if (program.output) {
+        if (program.generator.indexOf('/') !== 0) {
+            program.output = __dirname + '/' + program.generator;
+        }
+        outputStream = fs.createWriteStream(program.output);
+    }
+
+    var reporter = new DefaultReporter(outputStream);
+
+    var bench = new Benchmark(server, reporter, options);
 
 // On ctrl+c
-process.on('SIGINT', function () {
-	logger.info("\nGracefully stoping worker from SIGINT (Ctrl+C)");
+    process.on('SIGINT', function () {
+        logger.info("\nGracefully stoping worker from SIGINT (Ctrl+C)");
 
-	setTimeout(function () {
+        setTimeout(function () {
+            if (bench.monitor.isRunning()) {
+                bench.terminate();
+            }
+        }, 2000);
 
-		if (bench.monitor.isRunning()) {
-			bench.terminate();
-		}
+    });
 
-	}, 2000);
-
+    bench.launch(program.amount, program.worker, program.requestRamp, program.workerRamp);
 });
-
-bench.launch(program.amount, program.worker, program.requestRamp, program.workerRamp);
-
