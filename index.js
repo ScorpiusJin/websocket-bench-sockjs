@@ -12,7 +12,9 @@ var Benchmark = require('./lib/benchmark.js'),
     moment = require('moment'),
     jsonPackage = require('./package.json');
 
-    var chance = new Chance();
+var startupDate = moment();
+
+var chance = new Chance();
 
 program
 	.version(jsonPackage != undefined ? jsonPackage.version : "0.0.0")
@@ -60,6 +62,8 @@ if (!program.reportingPath) {
     program.reportingPath = process.cwd() + '/reporting';
 }
 
+program.reportingPath = path.join(program.reportingPath, startupDate.format("YYYY-MM-DD"));
+
 if (!program.generator) {
 	program.generator = __dirname + '/lib/generator.js';
 }
@@ -92,7 +96,7 @@ var options = {
 	verbose: program.verbose,
     reportingPath: program.reportingPath,
     executionUid: program.uid,
-    executionDate: moment().format("YYYYMMDDHHmmss")
+    executionDate: startupDate.format("YYYYMMDDHHmmss")
 };
 
 if (program.verbose) {
