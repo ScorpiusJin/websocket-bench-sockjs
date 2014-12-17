@@ -1,6 +1,6 @@
 {
   "name": "websocket-bench-sockjs",
-  "version": "0.4.3",
+  "version": "0.4.4",
   "description": "Tool for benchmark websocket (socket.io, faye, primus, sockjs)",
   "main": "index.js",
   "scripts": {
@@ -16,6 +16,7 @@
   "author": "Alexis Kinsella <alexis.kinsella@gmail.com> (http://blog.helyx.org/)",
   "license": "BSD",
   "dependencies": {
+    "chance": "^0.7.0",
     "cli-table": "~0.3.0",
     "colors": "~0.6",
     "commander": "~1.1.1",
@@ -26,6 +27,7 @@
     "moment": "*",
     "node-sockjs-client-aki": "^1.0.0",
     "request": "2.34.0",
+    "stripcolorcodes": "^0.1.0",
     "underscore": "*",
     "uuid": "1.4.1",
     "winston": "~0.7.1"

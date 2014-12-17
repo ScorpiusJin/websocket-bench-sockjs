@@ -6,19 +6,24 @@ var Benchmark = require('./lib/benchmark.js'),
 	os = require('os'),
 	program = require('commander'),
 	logger = require('./lib/logger'),
-    mkdirp = require('mkdirp');
+    mkdirp = require('mkdirp'),
+    path = require('path'),
+    Chance = require('chance'),
+    moment = require('moment'),
+    jsonPackage = require('./package.json');
 
+    var chance = new Chance();
 
 program
-	.version('0.1.4')
+	.version(jsonPackage != undefined ? jsonPackage.version : "0.0.0")
 	.usage('[options] <server>')
 	.option('-a, --amount <n>', 'Total number of persistent connection, Default to 100', parseInt)
 	.option('-w, --worker-ramp <n>', 'Worker ramp in ms, Default to 5', parseInt)
 	.option('-r, --request-ramp <n>', 'Request ramp in ms, Default to 5', parseInt)
 	.option('-W, --worker <n>', 'number of worker', parseInt)
 	.option('-g, --generator <file>', 'js file for generate message or special event')
-	.option('-o, --output <output>', 'Output file')
 	.option('-t, --type <type>', 'type of websocket server to bench(sockjs). Default to io')
+    .option('-u --type <value>', 'uid of execution')
     .option('-p, --transport <type>', 'type of transport to websocket (websockets, sockjs). Default to websockets')
     .option('-R, --reporting-path <path>', 'path of directory for reporting')
 	.option('-v, --verbose', 'Verbose Logging')
@@ -63,6 +68,10 @@ if (program.generator.indexOf('/') !== 0) {
 	program.generator = process.cwd() + '/' + program.generator;
 }
 
+if (!program.uid) {
+    program.uid = chance.string({length: 6, pool: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789' });
+}
+
 
 if (!program.type) {
 	program.type = 'sockjs';
@@ -81,7 +90,9 @@ var options = {
 	type: program.type,
 	transport: program.transport,
 	verbose: program.verbose,
-    reportingPath: program.reportingPath
+    reportingPath: program.reportingPath,
+    executionUid: program.uid,
+    executionDate: moment().format("YYYYMMDDHHmmss")
 };
 
 if (program.verbose) {
@@ -95,14 +106,9 @@ mkdirp(program.reportingPath, function(err) {
         process.exit(1);
     }
 
-    var outputStream = null;
-
-    if (program.output) {
-        if (program.generator.indexOf('/') !== 0) {
-            program.output = __dirname + '/' + program.generator;
-        }
-        outputStream = fs.createWriteStream(program.output);
-    }
+    var  reportFilePath = options.reportingPath + "/REPORT-" + options.executionUid + "-" + path.basename(options.generatorFile, '.js') + "-" + options.executionDate + ".out";
+    logger.info("Report file path: '" + reportFilePath + "'");
+    var outputStream = fs.createWriteStream(reportFilePath);
 
     var reporter = new DefaultReporter(outputStream);
 
