@@ -77,13 +77,13 @@ if (!program.type) {
 	program.type = 'sockjs';
 }
 
-logger.info('Launch bench with :\n' +
-	' - ' + program.amount + ' total connection\n' +
-    ' - ' + program.requestRamp + 'ms request ramp\n' +
-    ' - ' + program.workerRamp + 'ms worker ramp\n' +
-    ' - ' + program.worker + ' worker(s)\n' +
-    ' - Reporting path: ' + program.reportingPath + '\n' +
-	" - WS server : '" + program.type + "'\n");
+logger.info('Launch bench with :');
+logger.info(" - " + program.amount + " total connection");
+logger.info(" - " + program.requestRamp + "ms request ramp");
+logger.info(" - " + program.workerRamp + "ms worker ramp");
+logger.info(" - " + program.worker + " worker(s)");
+logger.info(" - Reporting path: '" + program.reportingPath + "'");
+logger.info(" - WS server : '" + program.type +"'");
 
 var options = {
 	generatorFile: program.generator,
